@@ -1,0 +1,3 @@
+databaseChangelog:
+  - include:
+      file: db/changelog/changeset/create-paste-table.yaml

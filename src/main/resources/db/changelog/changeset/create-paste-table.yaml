@@ -1,0 +1,35 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Utkin
+      changes:
+        - createTable:
+            schemaName: public
+            tableName: paste
+            columns:
+              - column:
+                    name: id
+                    type: bigint
+                    constraints:
+                      primaryKey: true
+                      nullable: false
+              - column:
+                  name: data
+                  type: text
+              - column:
+                  name: expiration_time
+                  type: timestamp
+              - column:
+                  name: hash
+                  type: varchar(255)
+              - column:
+                  name: status
+                  type: varchar(32)
+        - createSequence:
+            schemaName: public
+            sequenceName: paste_sequence
+            startValue: 1
+            maxValue: 20
+
+
+
