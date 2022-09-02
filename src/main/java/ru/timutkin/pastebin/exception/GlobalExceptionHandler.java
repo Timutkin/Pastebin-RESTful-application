@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
-public class RestResponseEntityExceptionHandler {
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = {PasteNotFoundException.class, PasteNotActiveException.class})
     protected ResponseEntity<Response> handleException(Exception exception){
