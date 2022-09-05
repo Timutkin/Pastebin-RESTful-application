@@ -1,25 +1,24 @@
 package ru.timutkin.pastebin.factory;
 
 import org.springframework.stereotype.Component;
-import ru.timutkin.pastebin.dto.PasteDTO;
-import ru.timutkin.pastebin.store.entity.Paste;
+import ru.timutkin.pastebin.store.dto.PasteDTO;
+import ru.timutkin.pastebin.store.entity.PasteEntity;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class PasteDTOFactory {
 
-    public PasteDTO createPasteDTO(Paste paste){
+    public PasteDTO createPasteDTO(PasteEntity pasteEntity){
         return PasteDTO.builder()
-                .creationTime(paste.getCreationTime())
-                .expirationTime(paste.getExpirationTime())
-                .data(paste.getData())
+                .creationTime(pasteEntity.getCreationTime())
+                .expirationTime(pasteEntity.getExpirationTime())
+                .data(pasteEntity.getData())
                 .build();
     }
 
-    public List<PasteDTO> createListPasteDTO(List<Paste> pasteList){
-        return pasteList.stream()
+    public List<PasteDTO> createListPasteDTO(List<PasteEntity> pasteEntityList){
+        return pasteEntityList.stream()
                 .map(this::createPasteDTO)
                 .toList();
 

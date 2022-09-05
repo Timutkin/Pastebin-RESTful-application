@@ -3,12 +3,12 @@ package ru.timutkin.pastebin.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.timutkin.pastebin.dto.PasteDTO;
+import ru.timutkin.pastebin.store.dto.PasteDTO;
 import ru.timutkin.pastebin.exception.PasteNotActiveException;
 import ru.timutkin.pastebin.exception.PasteNotFoundException;
 import ru.timutkin.pastebin.factory.PasteDTOFactory;
 import ru.timutkin.pastebin.factory.PasteFactory;
-import ru.timutkin.pastebin.store.entity.Paste;
+import ru.timutkin.pastebin.store.entity.PasteEntity;
 import ru.timutkin.pastebin.store.enumeration.PasteAccessStatus;
 import ru.timutkin.pastebin.store.enumeration.PasteStatus;
 import ru.timutkin.pastebin.store.repository.PasteRepository;
@@ -32,26 +32,26 @@ public class PasteController {
 
     @GetMapping("/{hash}")
     public ResponseEntity<PasteDTO> getPaste(@PathVariable String hash){
-        Optional<Paste> mayBePaste = pasteRepository.findPasteByHash(hash);
+        Optional<PasteEntity> mayBePaste = pasteRepository.findPasteByHash(hash);
 
         if (mayBePaste.isEmpty()){
             throw new PasteNotFoundException(String.format("Paste with hash = %s not found", hash));
         }
 
-        Paste paste = mayBePaste.get();
+        PasteEntity pasteEntity = mayBePaste.get();
 
-        if (paste.getStatus().equals(PasteStatus.NOT_ACTIVE)){
+        if (pasteEntity.getStatus().equals(PasteStatus.NOT_ACTIVE)){
             throw new PasteNotActiveException("The period of access to pasta is over");
         }
 
-        return ResponseEntity.ok(pasteDTOFactory.createPasteDTO(paste));
+        return ResponseEntity.ok(pasteDTOFactory.createPasteDTO(pasteEntity));
     }
 
     @GetMapping("/")
     public ResponseEntity<List<PasteDTO>> getLastPaste(){
-        List<Paste> pastes = pasteRepository.findLastTenPaste();
+        List<PasteEntity> pasteEntities = pasteRepository.findLastTenPaste();
 
-        return ResponseEntity.ok(pasteDTOFactory.createListPasteDTO(pastes));
+        return ResponseEntity.ok(pasteDTOFactory.createListPasteDTO(pasteEntities));
     }
 
     @PostMapping("/")
@@ -64,11 +64,11 @@ public class PasteController {
 
             }
 
-            Paste paste = pasteFactory.makeDefault(data, time, accessStatus);
+            PasteEntity pasteEntity = pasteFactory.makeDefault(data, time, accessStatus);
 
-            pasteRepository.save(paste);
+            pasteRepository.save(pasteEntity);
 
-            return ResponseEntity.ok(REF+paste.getHash());
+            return ResponseEntity.ok(REF+ pasteEntity.getHash());
     }
 
 }

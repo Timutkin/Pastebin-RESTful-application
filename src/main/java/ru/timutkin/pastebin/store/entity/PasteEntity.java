@@ -3,7 +3,6 @@ package ru.timutkin.pastebin.store.entity;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.timutkin.pastebin.hash.HashGenerator;
 import ru.timutkin.pastebin.store.enumeration.PasteAccessStatus;
 import ru.timutkin.pastebin.store.enumeration.PasteStatus;
 
@@ -20,7 +19,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "paste", schema = "public")
 @ToString
-public class Paste {
+public class PasteEntity {
+
     @Id
     @SequenceGenerator(name = "paste_seq",
             sequenceName = "paste_sequence",
@@ -48,7 +48,5 @@ public class Paste {
     @Column(name = "access")
     @Enumerated(EnumType.STRING)
     PasteAccessStatus accessStatus;
-
-
 
 }

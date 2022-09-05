@@ -1,4 +1,4 @@
-package ru.timutkin.pastebin.dto;
+package ru.timutkin.pastebin.store.dto;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
