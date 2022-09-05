@@ -24,47 +24,49 @@ public class IPasteService implements PasteService{
     PasteRepository pasteRepository;
 
     @Override
+
     public PasteEntity getPasteByHash(String hash) {
         Optional<PasteEntity> mayBePaste = pasteRepository.findPasteByHash(hash);
 
-        if (mayBePaste.isEmpty()){
-            throw new PasteNotFoundException(String.format("Paste with hash = %s not found", hash));
-        }
+        PasteEntity paste = mayBePaste.orElseThrow(
+                ()-> new PasteNotFoundException(String.format("Paste with hash = {%s} not found ",hash))
+        );
 
-        PasteEntity paste = mayBePaste.get();
-
-        if (paste.getStatus().equals(PasteStatus.NOT_ACTIVE)){
+        if (paste.getStatus().equals(PasteStatus.NOT_ACTIVE)) {
             throw new PasteNotActiveException("The period of access to pasta is over");
         }
 
         return paste;
-    }
-
-    @Override
-    public List<PasteEntity> getLastPaste() {
-        List<PasteEntity>pastes = pasteRepository.findLastTenPaste();
-
-        if (pastes.isEmpty()){
-            throw new PasteNotFoundException(String.format("Pastes with status = %s  and access = %s not found", PasteAccessStatus.PUBLIC, PasteStatus.ACTIVE));
         }
 
-        return pastes;
-    }
+        @Override
+        public List<PasteEntity> getLastPaste () {
+            Optional<List<PasteEntity>> pastes = pasteRepository.findLastTenPaste();
 
-    @Override
-    public void savePaste(PasteEntity paste) {
-        if (paste.getExpirationTime().isBefore(LocalDateTime.now())){
-            throw new IncorrectTimeException("The expiration time of the paste should be longer than the current time");
+            return pastes.orElseThrow(
+                    () -> new PasteNotFoundException(String.format("Pastes with status = %s  and access = %s not found",
+                            PasteAccessStatus.PUBLIC, PasteStatus.ACTIVE))
+            );
         }
-        pasteRepository.save(paste);
-    }
 
-    @Override
-    @Scheduled(fixedRate = 1000)
-    public void updatePasteStatus() {
-        List<PasteEntity> pasteList = pasteRepository.findPasteByExpirationTimeBefore(LocalDateTime.now());
-        pasteList.stream()
-                .peek(paste -> paste.setStatus(PasteStatus.NOT_ACTIVE))
-                .forEach(paste -> pasteRepository.save(paste));
+        @Override
+        public void savePaste (PasteEntity paste){
+
+                if (paste.getExpirationTime().isBefore(LocalDateTime.now())) {
+                    throw new IncorrectTimeException("The expiration time of the paste should be longer than the current time");
+                }
+
+                pasteRepository.save(paste);
+            }
+
+        @Override
+        @Scheduled(fixedRate = 1000)
+        public void updatePasteStatus () {
+
+            List<PasteEntity> pasteList = pasteRepository.findPasteByExpirationTimeBefore(LocalDateTime.now());
+
+            pasteList.stream()
+                    .peek(paste -> paste.setStatus(PasteStatus.NOT_ACTIVE))
+                    .forEach(paste -> pasteRepository.save(paste));
+        }
     }
-}

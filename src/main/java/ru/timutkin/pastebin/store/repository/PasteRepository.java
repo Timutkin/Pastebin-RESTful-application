@@ -14,7 +14,7 @@ public interface PasteRepository extends JpaRepository<PasteEntity, Long> {
 
     @Query(value = "select * from paste where access = 'PUBLIC' and status = 'ACTIVE' order by id desc limit 10 ",
             nativeQuery = true)
-    List<PasteEntity> findLastTenPaste();
+    Optional<List<PasteEntity>> findLastTenPaste();
 
     List<PasteEntity> findPasteByExpirationTimeBefore(LocalDateTime timeBefore);
 

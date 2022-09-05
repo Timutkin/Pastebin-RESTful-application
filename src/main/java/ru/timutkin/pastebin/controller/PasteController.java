@@ -3,6 +3,9 @@ package ru.timutkin.pastebin.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+
+import ru.timutkin.pastebin.exception.IncorrectTimeException;
 import ru.timutkin.pastebin.exception.PasteNotActiveException;
 import ru.timutkin.pastebin.exception.PasteNotFoundException;
 import ru.timutkin.pastebin.factory.PasteDTOFactory;
@@ -25,7 +28,6 @@ public class PasteController {
 
     PasteService pasteService;
 
-
     PasteDTOFactory pasteDTOFactory;
 
     PasteFactory pasteFactory;
@@ -35,13 +37,16 @@ public class PasteController {
     @GetMapping("/{hash}")
     public ResponseEntity<PasteDTO> getPaste(@PathVariable String hash){
 
+
         PasteEntity paste = pasteService.getPasteByHash(hash);
+
 
         return ResponseEntity.ok(pasteDTOFactory.createPasteDTO(paste));
     }
 
     @GetMapping("/")
     public ResponseEntity<List<PasteDTO>> getLastPaste(){
+
         List<PasteEntity> pastes = pasteService.getLastPaste();
 
         return ResponseEntity.ok(pasteDTOFactory.createListPasteDTO(pastes));
