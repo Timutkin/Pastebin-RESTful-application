@@ -41,12 +41,14 @@ public class IPasteService implements PasteService{
 
         @Override
         public List<PasteEntity> getLastPaste () {
-            Optional<List<PasteEntity>> pastes = pasteRepository.findLastTenPaste();
+            List<PasteEntity> pastes = pasteRepository.findLastTenPaste();
 
-            return pastes.orElseThrow(
-                    () -> new PasteNotFoundException(String.format("Pastes with status = %s  and access = %s not found",
-                            PasteAccessStatus.PUBLIC, PasteStatus.ACTIVE))
-            );
+            if (pastes.isEmpty()){
+                throw  new PasteNotFoundException(String.format("Pastes with status = %s  and access = %s not found",
+                        PasteAccessStatus.PUBLIC, PasteStatus.ACTIVE));
+            }
+
+            return pastes;
         }
 
         @Override

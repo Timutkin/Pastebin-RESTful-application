@@ -16,7 +16,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(data, HttpStatus.NOT_FOUND);
     }
 
-
     @ExceptionHandler(value = {IncorrectTimeException.class})
     protected ResponseEntity<Response> handleIncorrectDataException(Exception exception){
         Response data = new Response();
@@ -31,5 +30,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(data, HttpStatus.FORBIDDEN);
     }
 
+    @ExceptionHandler(value = {EmailAlreadyExistException.class, UsernameAlreadyExistException.class})
+    protected ResponseEntity<Response> handleAlreadyExistsException(Exception exception){
+        Response data = new Response();
+        data.setInfo(exception.getClass().getSimpleName() + " : " + exception.getMessage());
+        return new ResponseEntity<>(data, HttpStatus.FORBIDDEN);
+    }
 
 }

@@ -27,7 +27,7 @@ public class PasteEntity {
             allocationSize = 20)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "paste_seq")
     @Column(name = "id", nullable = false)
-    private Long id;
+    Long id;
 
     @Column(name = "data")
     String data;
