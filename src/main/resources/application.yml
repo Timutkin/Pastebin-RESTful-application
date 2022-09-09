@@ -5,6 +5,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/PasteBin
     driver-class-name: org.postgresql.Driver
 
+
   liquibase:
     enabled: false
 
@@ -14,9 +15,18 @@ spring:
       ddl-auto: validate
     open-in-view: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+#  mvc:
+#    view:
+#      prefix: src/main/resources/template
+#      suffix: .html
 
 server:
   port: 2022
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
 
 
 
