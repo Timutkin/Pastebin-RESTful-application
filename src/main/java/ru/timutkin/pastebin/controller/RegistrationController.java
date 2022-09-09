@@ -17,7 +17,6 @@ import ru.timutkin.pastebin.store.repository.UserRepository;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @RestController
 @AllArgsConstructor
-@CrossOrigin()
 @RequestMapping("/register")
 public class RegistrationController {
 
