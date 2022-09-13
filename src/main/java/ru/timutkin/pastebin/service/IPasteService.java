@@ -1,6 +1,8 @@
 package ru.timutkin.pastebin.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,7 @@ import ru.timutkin.pastebin.store.enumeration.PasteAccessStatus;
 import ru.timutkin.pastebin.store.enumeration.PasteStatus;
 import ru.timutkin.pastebin.store.repository.PasteRepository;
 
+import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -23,8 +26,9 @@ public class IPasteService implements PasteService{
 
     PasteRepository pasteRepository;
 
-    @Override
+    private static final int PAGE_SIZE = 10;
 
+    @Override
     public PasteEntity getPasteByHash(String hash) {
         Optional<PasteEntity> mayBePaste = pasteRepository.findPasteByHash(hash);
 
@@ -59,6 +63,17 @@ public class IPasteService implements PasteService{
                 pasteRepository.save(paste);
             }
 
+
+        @Override
+        public List<PasteEntity> getPage(int number) {
+            PageRequest pageRequest = PageRequest.of(number-1,PAGE_SIZE, Sort.by("id"));
+            List<PasteEntity> pageOfPasteEntity = pasteRepository.findAllByAccessStatusAndStatus(PasteAccessStatus.PUBLIC, PasteStatus.ACTIVE, pageRequest);
+            if (pageOfPasteEntity.isEmpty()){
+                throw new PasteNotFoundException(String.format("No pastes found on the %d page",number));
+            }
+            return pageOfPasteEntity;
+        }
+
         @Override
         @Scheduled(fixedRate = 1000)
         public void updatePasteStatus () {
@@ -69,4 +84,5 @@ public class IPasteService implements PasteService{
                     .peek(paste -> paste.setStatus(PasteStatus.NOT_ACTIVE))
                     .forEach(paste -> pasteRepository.save(paste));
         }
-    }
+
+}

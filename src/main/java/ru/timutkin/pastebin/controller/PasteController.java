@@ -1,6 +1,7 @@
 package ru.timutkin.pastebin.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +24,11 @@ import java.util.Optional;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/v1/pastebin")
+@RequestMapping( path = "/api/v1/pastebin")
+/*
+
+ */
+
 public class PasteController {
 
     PasteService pasteService;
@@ -35,7 +40,7 @@ public class PasteController {
     private static final String REF = "http://localhost:2022/api/v1/pastebin/";
 
     @GetMapping("/{hash}")
-    public ResponseEntity<PasteDTO> getPaste(@PathVariable String hash){
+    private ResponseEntity<PasteDTO> getPaste(@PathVariable String hash){
 
 
         PasteEntity paste = pasteService.getPasteByHash(hash);
@@ -45,15 +50,21 @@ public class PasteController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<PasteDTO>> getLastPaste(){
+    private ResponseEntity<List<PasteDTO>> getLastPaste(){
 
         List<PasteEntity> pastes = pasteService.getLastPaste();
 
         return ResponseEntity.ok(pasteDTOFactory.createListPasteDTO(pastes));
     }
 
+    @GetMapping("/pages/{number}")
+    private ResponseEntity<List<PasteDTO>> getPage(@PathVariable Integer number){
+        return ResponseEntity.ok(pasteDTOFactory.createListPasteDTO(pasteService.getPage(number)));
+    }
+
+
     @PostMapping("/")
-    public ResponseEntity<String> createPaste(@RequestParam(name = "data") String data,
+    private ResponseEntity<String> createPaste(@RequestParam(name = "data") String data,
                                               @RequestParam(name = "expirationTime") String expirationTime,
                                               @RequestParam(name = "access")PasteAccessStatus accessStatus){
 
@@ -63,7 +74,7 @@ public class PasteController {
 
             pasteService.savePaste(paste);
 
-            return ResponseEntity.ok(REF+paste.getHash());
+            return new ResponseEntity<>(REF+paste.getHash(), HttpStatus.CREATED);
     }
 
 }

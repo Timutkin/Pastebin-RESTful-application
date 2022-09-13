@@ -7,6 +7,7 @@ import ru.timutkin.pastebin.exception.PasteNotFoundException;
 import ru.timutkin.pastebin.store.entity.PasteEntity;
 
 
+import java.awt.print.Pageable;
 import java.util.List;
 
 public interface PasteService{
@@ -16,6 +17,8 @@ public interface PasteService{
     List<PasteEntity> getLastPaste() throws PasteNotFoundException;
 
     void savePaste(PasteEntity paste) throws IncorrectTimeException;
+
+    List<PasteEntity> getPage(int number);
 
     void updatePasteStatus();
 
