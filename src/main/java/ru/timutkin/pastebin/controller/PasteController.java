@@ -24,11 +24,7 @@ import java.util.Optional;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping( path = "/api/v1/pastebin")
-/*
-
- */
-
+@RequestMapping( path = "/api/v1/pastebin/pastes")
 public class PasteController {
 
     PasteService pasteService;
@@ -37,7 +33,7 @@ public class PasteController {
 
     PasteFactory pasteFactory;
 
-    private static final String REF = "http://localhost:2022/api/v1/pastebin/";
+    private static final String REF = "http://localhost:2022/api/v1/pastebin/pastes/";
 
     @GetMapping("/{hash}")
     private ResponseEntity<PasteDTO> getPaste(@PathVariable String hash){
@@ -49,7 +45,7 @@ public class PasteController {
         return ResponseEntity.ok(pasteDTOFactory.createPasteDTO(paste));
     }
 
-    @GetMapping("/")
+    @GetMapping()
     private ResponseEntity<List<PasteDTO>> getLastPaste(){
 
         List<PasteEntity> pastes = pasteService.getLastPaste();
@@ -63,7 +59,7 @@ public class PasteController {
     }
 
 
-    @PostMapping("/")
+    @PostMapping()
     private ResponseEntity<String> createPaste(@RequestParam(name = "data") String data,
                                               @RequestParam(name = "expirationTime") String expirationTime,
                                               @RequestParam(name = "access")PasteAccessStatus accessStatus){
